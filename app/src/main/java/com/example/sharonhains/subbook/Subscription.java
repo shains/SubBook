@@ -65,4 +65,10 @@ public class Subscription {
         }
         this.charge = charge;
     }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
 }

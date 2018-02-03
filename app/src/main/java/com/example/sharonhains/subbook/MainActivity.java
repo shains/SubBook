@@ -1,6 +1,7 @@
 package com.example.sharonhains.subbook;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
@@ -29,6 +30,7 @@ public class MainActivity extends Activity {
     private static final String FILENAME = "subbook.sav";
     private EditText bodyText;
     private ListView prevSubscriptionList;
+    private String testtext = "hey how's it going";
 
     private ArrayList<Subscription> sublist;
     private ArrayAdapter<Subscription> adapter;
@@ -41,17 +43,21 @@ public class MainActivity extends Activity {
         bodyText = (EditText) findViewById(R.id.body);
         Button addButton = (Button) findViewById(R.id.add);
 
+
         prevSubscriptionList = (ListView) findViewById(R.id.prevSubscriptionList);
 
         addButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
+                //changes the page to the subscription details page
                 setContentView(R.layout.addnewsubscription);
 
                 setResult(RESULT_OK);
 
-                String text = bodyText.getText().toString();
+                //String text = bodyText.getText(testtext) ;
+
+                String text = bodyText.getText().toString() + testtext;
 
                 //int charge = body;
 
@@ -65,6 +71,23 @@ public class MainActivity extends Activity {
 
             }
         });
+
+    }
+
+    public void createSubscription(View view) {
+        Intent intent = new Intent(this, DisplaySubscription.class);
+        //EditText editText = (EditText) findViewById(R.id.editText);
+        startActivity(intent);
+    }
+
+    // https://stackoverflow.com/questions/20235697/go-back-to-2nd-previous-activity
+    public void returnMain (View view) {
+        Intent intent = new Intent(this,
+                MainActivity.onCreate());
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+
     }
 
     @Override
