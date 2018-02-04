@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ViewFlipper;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,13 +34,21 @@ public class MainActivity extends Activity {
     private ArrayList<Subscription> sublist;
     private ArrayAdapter<Subscription> adapter;
 
+    //private Button addButton;
+    private ViewFlipper vf;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bodyText = (EditText) findViewById(R.id.body);
         Button addButton = (Button) findViewById(R.id.add);
+        Button backButton = (Button) findViewById(R.id.go_back);
+
+        //bodyText = (EditText) findViewById(R.id.body);
+
+        vf = findViewById(R.id.viewFlipper);
 
         prevSubscriptionList = (ListView) findViewById(R.id.prevSubscriptionList);
 
@@ -47,11 +56,15 @@ public class MainActivity extends Activity {
 
             public void onClick(View v) {
 
-                setContentView(R.layout.addnewsubscription);
+                vf.showNext();
+
+                //setContentView(R.layout.addnewsubscription);
 
                 setResult(RESULT_OK);
 
-                String text = bodyText.getText().toString();
+                String text = "testtext";
+
+                //String text = bodyText.getText().toString();
 
                 //int charge = body;
 
@@ -63,6 +76,16 @@ public class MainActivity extends Activity {
 
                 saveInFile();
 
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                vf.showNext();
+
+                setResult(RESULT_OK);
             }
         });
     }
