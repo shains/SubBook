@@ -28,13 +28,18 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
     private static final String FILENAME = "subbook.sav";
-    private EditText bodyText;
+    private EditText subcomment;
+    private EditText subcharge;
+    private EditText subname;
+    private EditText subdate;
     private ListView prevSubscriptionList;
+
 
     private ArrayList<Subscription> sublist;
     private ArrayAdapter<Subscription> adapter;
 
-    //private Button addButton;
+    private Button newSubButton;
+    private Button delSubButton; //= (Button) findViewById(R.id.delsub);
     private ViewFlipper vf;
 
 
@@ -43,13 +48,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        Button newSubButton = (Button) findViewById(R.id.addsub);
         Button addButton = (Button) findViewById(R.id.add);
         Button backButton = (Button) findViewById(R.id.go_back);
 
+        subcharge = (EditText) findViewById(R.id.subprice);
         //bodyText = (EditText) findViewById(R.id.body);
-
         vf = findViewById(R.id.viewFlipper);
-
         prevSubscriptionList = (ListView) findViewById(R.id.prevSubscriptionList);
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -57,19 +63,11 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 vf.showNext();
-
-                //setContentView(R.layout.addnewsubscription);
-
                 setResult(RESULT_OK);
-
                 String text = "testtext";
-
                 //String text = bodyText.getText().toString();
-
-                //int charge = body;
-
-                Subscription newSub = new Subscription(text);
-
+                String charge = "4";
+                Subscription newSub = new Subscription(text,charge);
                 sublist.add(newSub);
 
                 adapter.notifyDataSetChanged();
@@ -82,12 +80,22 @@ public class MainActivity extends Activity {
         backButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
                 vf.showNext();
-
                 setResult(RESULT_OK);
             }
         });
+
+        newSubButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                setResult(RESULT_OK);
+                addNewSubscription();
+
+            }
+
+        });
+
+
     }
 
     @Override
@@ -98,6 +106,19 @@ public class MainActivity extends Activity {
         adapter = new ArrayAdapter<Subscription>(this,
                 R.layout.list_item, sublist);
         prevSubscriptionList.setAdapter(adapter);
+    }
+
+    private void addNewSubscription(){
+        String text = "testtext";
+        String newCharge = subcharge.getText().toString();
+        //int intCharge = Integer.parseInt(newCharge);
+        Subscription newSub = new Subscription(text,newCharge);
+
+        sublist.add(newSub);
+
+        adapter.notifyDataSetChanged();
+
+        saveInFile();
     }
 
     private void loadFromFile() {

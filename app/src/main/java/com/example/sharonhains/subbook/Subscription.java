@@ -1,5 +1,8 @@
 package com.example.sharonhains.subbook;
 
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -8,18 +11,17 @@ import java.util.Date;
 
 public class Subscription {
 
-
-
     private String name;
     private Date date;
     private String comment;
-    private int charge;
+    private String charge;
+    private Format format;
 
-    public Subscription (String name){//, Date date, String comment, int charge){
+    public Subscription (String name, String charge){//, Date date, String comment, int charge){
         this.name = name;
         //this.date = date;
         //this.comment = comment;
-        //this.charge = charge;
+        this.charge = charge;
     }
 
     public String getName() {
@@ -38,8 +40,29 @@ public class Subscription {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate(Date date) throws IncorrectDateException {
+
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        String stringdate = format.format(date);
+
+        if (isValidDate(stringdate) == true) {
+            this.date = date;
+        }
+        else {
+            throw new IncorrectDateException();
+        }
+    }
+
+    //Source http://www.java2s.com/Tutorial/Java/0120__Development/CheckifaStringisavaliddate.htm
+    public static boolean isValidDate(String inDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(inDate.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
     }
 
     public String getComment() {
@@ -54,15 +77,23 @@ public class Subscription {
         this.comment = comment;
     }
 
-    public int getCharge() {
+    /*public int getCharge() {
         return charge;
     }
 
-    public void setCharge(int charge) throws NegativeValueException {
+    /*public void setCharge(int charge) throws NegativeValueException {
 
         if (charge < 0){
             throw new NegativeValueException();
         }
         this.charge = charge;
+    }*/
+
+
+
+    @Override
+    public String toString(){
+        return charge;
     }
+
 }
