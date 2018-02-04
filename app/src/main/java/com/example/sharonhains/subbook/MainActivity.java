@@ -23,7 +23,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends Activity {
 
@@ -61,19 +64,8 @@ public class MainActivity extends Activity {
         addButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
                 vf.showNext();
                 setResult(RESULT_OK);
-                String text = "testtext";
-                //String text = bodyText.getText().toString();
-                String charge = "4";
-                Subscription newSub = new Subscription(text,charge);
-                sublist.add(newSub);
-
-                adapter.notifyDataSetChanged();
-
-                saveInFile();
-
             }
         });
 
@@ -109,10 +101,22 @@ public class MainActivity extends Activity {
     }
 
     private void addNewSubscription(){
-        String text = "testtext";
+        //DateFormat subdateformat = new SimpleDateFormat("YYYY-MM-DD");
+        //String text = "testtext";
+        subcharge = (EditText) findViewById(R.id.subprice);
+        subcomment = (EditText) findViewById(R.id.subcomment);
+        subname = (EditText) findViewById(R.id.subname);
+        subdate = (EditText) findViewById(R.id.subdate);
+
         String newCharge = subcharge.getText().toString();
-        //int intCharge = Integer.parseInt(newCharge);
-        Subscription newSub = new Subscription(text,newCharge);
+        String newComment = subcomment.getText().toString();
+        String newName = subname.getText().toString();
+        String newDate = subdate.getText().toString();
+        int intCharge = Integer.parseInt(newCharge);
+
+        Subscription newSub = new Subscription(newName,intCharge,newComment,newDate);
+        newSub.createSubString(newName,intCharge,newComment,newDate);
+        //int charge_detail = newSub.getCharge();
 
         sublist.add(newSub);
 

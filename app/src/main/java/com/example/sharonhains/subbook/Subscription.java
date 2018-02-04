@@ -12,15 +12,16 @@ import java.util.Date;
 public class Subscription {
 
     private String name;
-    private Date date;
+    private String date;
     private String comment;
-    private String charge;
+    private int charge;
     private Format format;
+    private String subListString;
 
-    public Subscription (String name, String charge){//, Date date, String comment, int charge){
+    public Subscription (String name, int charge, String comment, String subdate){
         this.name = name;
-        //this.date = date;
-        //this.comment = comment;
+        this.date = subdate;
+        this.comment = comment;
         this.charge = charge;
     }
 
@@ -36,7 +37,18 @@ public class Subscription {
         this.name = name;
     }
 
-    public Date getDate() {
+    public String getDate(){
+        return date;
+    }
+
+    public void setDate(String subdate) throws IncorrectDateException{
+        if (date.length() > 10) {
+            throw new IncorrectDateException();
+        }
+        this.date = subdate;
+    }
+
+    /*public Date getDate() {
         return date;
     }
 
@@ -51,7 +63,7 @@ public class Subscription {
         else {
             throw new IncorrectDateException();
         }
-    }
+    }*/
 
     //Source http://www.java2s.com/Tutorial/Java/0120__Development/CheckifaStringisavaliddate.htm
     public static boolean isValidDate(String inDate) {
@@ -77,23 +89,33 @@ public class Subscription {
         this.comment = comment;
     }
 
-    /*public int getCharge() {
+    public int getCharge() {
         return charge;
     }
 
-    /*public void setCharge(int charge) throws NegativeValueException {
+    public void setCharge(int charge) throws NegativeValueException {
 
         if (charge < 0){
             throw new NegativeValueException();
         }
         this.charge = charge;
-    }*/
+    }
 
+    public String createSubString(String name, int charge, String comment, String date){
+        String stringInt = Integer.toString(charge);
+        subListString = "Subscription" + System.getProperty("line.separator")
+                + "Name: " + name + System.getProperty("line.separator")
+                + "Price: " + stringInt + System.getProperty("line.separator")
+                + "Date: " + date + System.getProperty("line.separator")
+                + "Comment: " + comment;
+        return subListString;
+    }
 
 
     @Override
     public String toString(){
-        return charge;
+        //createSubString(name, charge, comment, subdate);
+        return subListString;
     }
 
 }
