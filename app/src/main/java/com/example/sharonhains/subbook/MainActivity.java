@@ -57,12 +57,16 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //listTotalCharge();
 
+        Button backButton = (Button) findViewById(R.id.go_back);
         Button newSubButton = (Button) findViewById(R.id.addsub);
         final Button addButton = (Button) findViewById(R.id.add);
-        Button backButton = (Button) findViewById(R.id.go_back);
         final Button delButton = (Button) findViewById(R.id.delsub);
+        final Button modifyButton = (Button) findViewById(R.id.modifysub);
+        subcharge = (EditText) findViewById(R.id.subprice);
+        subcomment = (EditText) findViewById(R.id.subcomment);
+        subname = (EditText) findViewById(R.id.subname);
+        subdate = (EditText) findViewById(R.id.subdate);
 
 
         vf = findViewById(R.id.viewFlipper);
@@ -78,7 +82,6 @@ public class MainActivity extends Activity {
         });
 
         backButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 vf.showNext();
                 setResult(RESULT_OK);
@@ -86,36 +89,18 @@ public class MainActivity extends Activity {
         });
 
         newSubButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 setResult(RESULT_OK);
                 addNewSubscription();
-
             }
-
         });
+
         prevSubscriptionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                subcharge = (EditText) findViewById(R.id.subprice);
-                subcomment = (EditText) findViewById(R.id.subcomment);
-                subname = (EditText) findViewById(R.id.subname);
-                subdate = (EditText) findViewById(R.id.subdate);
-
+            public void onItemClick(AdapterView<?> adapterView, View view,final int i, long l) {
 
                 final Object position = prevSubscriptionList.getItemAtPosition(i);
-                Double selcharge = sublist.get(i).getCharge();
-                String selname = sublist.get(i).getName();
-                String selcomment = sublist.get(i).getComment();
-                String seldate = sublist.get(i).getDate();
-
-                String strcharge = Double.toString(selcharge);
-
-                subcharge.setText(strcharge,TextView.BufferType.EDITABLE);
-                subcomment.setText(selcomment,TextView.BufferType.EDITABLE);
-                subname.setText(selname,TextView.BufferType.EDITABLE);
-                subdate.setText(seldate,TextView.BufferType.EDITABLE);
+                viewDetails(i);
 
                 vf.showNext();
 
@@ -123,12 +108,15 @@ public class MainActivity extends Activity {
 
                     public void onClick(View v) {
 
-                        removeItemFromList(position);
+
+                        removeItemFromList(position,i);
+
                     }
                 });
-                addButton.setOnClickListener(new View.OnClickListener() {
+                modifyButton.setOnClickListener(new View.OnClickListener() {
 
                     public void onClick(View v) {
+                        modifySubDetails(i);
 
                     }
                 });
@@ -148,16 +136,23 @@ public class MainActivity extends Activity {
                 R.layout.list_item, sublist);
         prevSubscriptionList.setAdapter(adapter);
         listTotalCharge();
+    }
 
+    private void viewDetails(int i){
+        Double selcharge = sublist.get(i).getCharge();
+        String selname = sublist.get(i).getName();
+        String selcomment = sublist.get(i).getComment();
+        String seldate = sublist.get(i).getDate();
+
+        String strcharge = Double.toString(selcharge);
+
+        subcharge.setText(strcharge,TextView.BufferType.EDITABLE);
+        subcomment.setText(selcomment,TextView.BufferType.EDITABLE);
+        subname.setText(selname,TextView.BufferType.EDITABLE);
+        subdate.setText(seldate,TextView.BufferType.EDITABLE);
     }
 
     private void addNewSubscription(){
-
-        subcharge = (EditText) findViewById(R.id.subprice);
-        subcomment = (EditText) findViewById(R.id.subcomment);
-        subname = (EditText) findViewById(R.id.subname);
-        subdate = (EditText) findViewById(R.id.subdate);
-
         String newCharge = subcharge.getText().toString();
         String newComment = subcomment.getText().toString();
         String newName = subname.getText().toString();
@@ -174,13 +169,43 @@ public class MainActivity extends Activity {
         saveInFile();
     }
 
+    private void modifySubDetails(int i){
+        double tosubtract = sublist.get(i).getCharge();
+        String newCharge = subcharge.getText().toString();
+        String newComment = subcomment.getText().toString();
+        String newName = subname.getText().toString();
+        String newDate = subdate.getText().toString();
+        double selcharge = Double.parseDouble(newCharge);
+
+        try {
+            sublist.get(i).setCharge(selcharge);
+            sublist.get(i).setComment(newComment);
+            sublist.get(i).setName(newName);
+            sublist.get(i).setDate(newDate);
+            sublist.get(i).createSubString(newName,selcharge,newComment,newDate);
+        } catch (NegativeValueException e){
+            e.printStackTrace();
+        } catch (CommentTooLongException e){
+            e.printStackTrace();
+        } catch (IncorrectDateException e){
+            e.printStackTrace();
+        } catch (NameTooLongException e){
+            e.printStackTrace();
+        }
+
+        double updatedcharge = selcharge - tosubtract;
+        updateTotalCharge(updatedcharge);
+        adapter.notifyDataSetChanged();
+        saveInFile();
+    }
+
     private double updateTotalCharge(double charge){
         currenttotalprice = currenttotalprice + charge;
         formatTotalCharge(currenttotalprice);
         return currenttotalprice;
     }
 
-    private Double listTotalCharge(){
+    private double listTotalCharge(){
         double addedcharge = 0;
         int length = prevSubscriptionList.getAdapter().getCount();
 
@@ -198,7 +223,9 @@ public class MainActivity extends Activity {
         displayprice.setText("Total Monthly Charge: "+stringtotal);
     }
 
-    private void removeItemFromList(Object position){
+    private void removeItemFromList(Object position,int i){
+        double removedcharge = sublist.get(i).getCharge();
+        updateTotalCharge(-removedcharge);
         sublist.remove(position);
         adapter.notifyDataSetChanged();
         saveInFile();
@@ -249,7 +276,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
     }
-
 
     protected void onDestroy(){
         super.onDestroy();
