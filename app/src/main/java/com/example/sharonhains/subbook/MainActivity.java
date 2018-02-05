@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity {
         Button newSubButton = (Button) findViewById(R.id.addsub);
         Button addButton = (Button) findViewById(R.id.add);
         Button backButton = (Button) findViewById(R.id.go_back);
+        final Button delButton = (Button) findViewById(R.id.delsub);
 
         subcharge = (EditText) findViewById(R.id.subprice);
         vf = findViewById(R.id.viewFlipper);
@@ -89,6 +91,24 @@ public class MainActivity extends Activity {
             }
 
         });
+        prevSubscriptionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                vf.showNext();
+                final Object position = prevSubscriptionList.getItemAtPosition(i);
+
+                delButton.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View v) {
+
+                        removeItemFromList(position);
+                    }
+                });
+
+
+            }
+        });
 
 
     }
@@ -104,7 +124,6 @@ public class MainActivity extends Activity {
     }
 
     private void addNewSubscription(){
-        //DateFormat subdateformat = new SimpleDateFormat("YYYY-MM-DD");
 
         subcharge = (EditText) findViewById(R.id.subprice);
         subcomment = (EditText) findViewById(R.id.subcomment);
@@ -124,19 +143,22 @@ public class MainActivity extends Activity {
         double calculatedtotal = totalCharge(intCharge);
         String stringtotal = Double.toString(calculatedtotal);
         displayprice = findViewById(R.id.TotalCharge);
-
         displayprice.setText("Total Monthly Charge: "+stringtotal);
 
         sublist.add(newSub);
-
         adapter.notifyDataSetChanged();
-
         saveInFile();
     }
 
     private double totalCharge(double charge){
         currenttotalprice = currenttotalprice + charge;
         return currenttotalprice;
+    }
+
+    private void removeItemFromList(Object position){
+        sublist.remove(position);
+        adapter.notifyDataSetChanged();
+        saveInFile();
     }
 
     private void loadFromFile() {
