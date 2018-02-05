@@ -14,11 +14,11 @@ public class Subscription {
     private String name;
     private String date;
     private String comment;
-    private int charge;
+    private double charge;
     private Format format;
     private String subListString;
 
-    public Subscription (String name, int charge, String comment, String subdate){
+    public Subscription (String name, double charge, String comment, String subdate){
         this.name = name;
         this.date = subdate;
         this.comment = comment;
@@ -89,11 +89,11 @@ public class Subscription {
         this.comment = comment;
     }
 
-    public int getCharge() {
+    public double getCharge() {
         return charge;
     }
 
-    public void setCharge(int charge) throws NegativeValueException {
+    public void setCharge(double charge) throws NegativeValueException {
 
         if (charge < 0){
             throw new NegativeValueException();
@@ -101,11 +101,16 @@ public class Subscription {
         this.charge = charge;
     }
 
-    public String createSubString(String name, int charge, String comment, String date){
-        String stringInt = Integer.toString(charge);
+    public void totalCharge(double charge){
+        double initcharge = 0;
+    }
+
+
+    public String createSubString(String name, double charge, String comment, String date){
+        String stringDouble = Double.toString(charge);
         subListString = "Subscription" + System.getProperty("line.separator")
                 + "Name: " + name + System.getProperty("line.separator")
-                + "Price: " + stringInt + System.getProperty("line.separator")
+                + "Price: " + stringDouble + System.getProperty("line.separator")
                 + "Date: " + date + System.getProperty("line.separator")
                 + "Comment: " + comment;
         return subListString;

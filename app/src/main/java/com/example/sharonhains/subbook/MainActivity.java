@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.google.gson.Gson;
@@ -31,11 +32,14 @@ import java.util.Date;
 public class MainActivity extends Activity {
 
     private static final String FILENAME = "subbook.sav";
+    //private static final String FILENAME = "totalcharge.sav";
     private EditText subcomment;
     private EditText subcharge;
     private EditText subname;
     private EditText subdate;
     private ListView prevSubscriptionList;
+    private TextView displayprice;
+    private double currenttotalprice = 0;
 
 
     private ArrayList<Subscription> sublist;
@@ -57,7 +61,6 @@ public class MainActivity extends Activity {
         Button backButton = (Button) findViewById(R.id.go_back);
 
         subcharge = (EditText) findViewById(R.id.subprice);
-        //bodyText = (EditText) findViewById(R.id.body);
         vf = findViewById(R.id.viewFlipper);
         prevSubscriptionList = (ListView) findViewById(R.id.prevSubscriptionList);
 
@@ -102,7 +105,7 @@ public class MainActivity extends Activity {
 
     private void addNewSubscription(){
         //DateFormat subdateformat = new SimpleDateFormat("YYYY-MM-DD");
-        //String text = "testtext";
+
         subcharge = (EditText) findViewById(R.id.subprice);
         subcomment = (EditText) findViewById(R.id.subcomment);
         subname = (EditText) findViewById(R.id.subname);
@@ -112,17 +115,28 @@ public class MainActivity extends Activity {
         String newComment = subcomment.getText().toString();
         String newName = subname.getText().toString();
         String newDate = subdate.getText().toString();
-        int intCharge = Integer.parseInt(newCharge);
 
+        double intCharge = Double.parseDouble(newCharge);
         Subscription newSub = new Subscription(newName,intCharge,newComment,newDate);
         newSub.createSubString(newName,intCharge,newComment,newDate);
-        //int charge_detail = newSub.getCharge();
+
+
+        double calculatedtotal = totalCharge(intCharge);
+        String stringtotal = Double.toString(calculatedtotal);
+        displayprice = findViewById(R.id.TotalCharge);
+
+        displayprice.setText("Total Monthly Charge: "+stringtotal);
 
         sublist.add(newSub);
 
         adapter.notifyDataSetChanged();
 
         saveInFile();
+    }
+
+    private double totalCharge(double charge){
+        currenttotalprice = currenttotalprice + charge;
+        return currenttotalprice;
     }
 
     private void loadFromFile() {
